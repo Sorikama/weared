@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 
-const categories = ['Homme', 'Femme', 'Enfant', 'Accessoires', 'Chaussures'];
+const categories = ['Tous', 'Homme', 'Femme', 'Enfant', 'Accessoires', 'Chaussures'];
 
 const products = [
+  // Homme
   {
     id: '1',
     title: 'T-Shirt',
@@ -12,58 +13,132 @@ const products = [
     condition: 'Très bon état',
     price: '1000 fcfa',
     seller: 'admin2153',
+    category: 'Homme',
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80',
   },
   {
     id: '2',
-    title: 'T-Shirt',
+    title: 'Chemise',
     size: 'L',
     condition: 'Très bon état',
-    price: '1000 fcfa',
+    price: '1500 fcfa',
     seller: 'johndoe01',
+    category: 'Homme',
     image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&q=80',
   },
   {
     id: '3',
-    title: 'T-Shirt',
+    title: 'Jean',
     size: 'M',
     condition: 'Bon état',
-    price: '1000 fcfa',
+    price: '2000 fcfa',
     seller: 'fashion_lover',
-    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&q=80',
+    category: 'Homme',
+    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80',
   },
+  // Femme
   {
     id: '4',
-    title: 'T-Shirt',
-    size: 'XL',
+    title: 'Robe',
+    size: 'M',
     condition: 'Très bon état',
-    price: '1000 fcfa',
-    seller: 'style_king',
-    image: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&q=80',
+    price: '2500 fcfa',
+    seller: 'style_queen',
+    category: 'Femme',
+    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&q=80',
   },
   {
     id: '5',
-    title: 'T-Shirt',
-    size: 'L',
+    title: 'Jupe',
+    size: 'S',
     condition: 'Très bon état',
-    price: '1000 fcfa',
+    price: '1200 fcfa',
     seller: 'weared_shop',
-    image: 'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=400&q=80',
+    category: 'Femme',
+    image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&q=80',
   },
   {
     id: '6',
-    title: 'T-Shirt',
+    title: 'Blouse',
     size: 'M',
     condition: 'Bon état',
-    price: '1000 fcfa',
+    price: '1800 fcfa',
     seller: 'vintage_style',
-    image: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80',
+    category: 'Femme',
+    image: 'https://images.unsplash.com/photo-1564257577-d18b7c1a4095?w=400&q=80',
+  },
+  // Enfant
+  {
+    id: '7',
+    title: 'T-Shirt Enfant',
+    size: '8 ans',
+    condition: 'Très bon état',
+    price: '800 fcfa',
+    seller: 'kids_fashion',
+    category: 'Enfant',
+    image: 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=400&q=80',
+  },
+  {
+    id: '8',
+    title: 'Short Enfant',
+    size: '10 ans',
+    condition: 'Bon état',
+    price: '600 fcfa',
+    seller: 'baby_store',
+    category: 'Enfant',
+    image: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=400&q=80',
+  },
+  // Accessoires
+  {
+    id: '9',
+    title: 'Sac à main',
+    size: 'Unique',
+    condition: 'Très bon état',
+    price: '3000 fcfa',
+    seller: 'accessories_pro',
+    category: 'Accessoires',
+    image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400&q=80',
+  },
+  {
+    id: '10',
+    title: 'Ceinture',
+    size: 'Ajustable',
+    condition: 'Bon état',
+    price: '500 fcfa',
+    seller: 'style_king',
+    category: 'Accessoires',
+    image: 'https://images.unsplash.com/photo-1624222247344-550fb60583bb?w=400&q=80',
+  },
+  // Chaussures
+  {
+    id: '11',
+    title: 'Baskets',
+    size: '42',
+    condition: 'Très bon état',
+    price: '4000 fcfa',
+    seller: 'sneaker_head',
+    category: 'Chaussures',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
+  },
+  {
+    id: '12',
+    title: 'Sandales',
+    size: '38',
+    condition: 'Bon état',
+    price: '1500 fcfa',
+    seller: 'shoe_store',
+    category: 'Chaussures',
+    image: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400&q=80',
   },
 ];
 
 export default function HomeScreen() {
-  const [selectedCategory, setSelectedCategory] = useState('Homme');
+  const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProducts = selectedCategory === 'Tous' 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
 
   const renderProduct = ({ item }: { item: typeof products[0] }) => (
     <TouchableOpacity style={styles.productCard}>
@@ -134,12 +209,13 @@ export default function HomeScreen() {
       </View>
 
       <FlatList
-        data={products}
+        data={filteredProducts}
         renderItem={renderProduct}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.productsGrid}
         showsVerticalScrollIndicator={false}
+        key={selectedCategory}
       />
     </View>
   );
@@ -214,7 +290,7 @@ const styles = StyleSheet.create({
   },
   productsGrid: {
     paddingHorizontal: 15,
-    paddingBottom: 20,
+    paddingBottom: 100,
   },
   productCard: {
     flex: 1,
