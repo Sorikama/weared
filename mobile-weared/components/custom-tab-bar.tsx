@@ -175,11 +175,11 @@ function TabIcon({ isFocused, iconName, onPress }: { isFocused: boolean; iconNam
 
       {/* Icône normale (non active) */}
       {!isFocused && (
-        <Animated.View style={{ transform: [{ scale: scaleAnim }], marginTop: LIFT_HEIGHT + 5 }}>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }], marginTop: LIFT_HEIGHT + 5, opacity: 0.5 }}>
           <Ionicons
             name={iconName}
             size={26}
-            color="#FFFFFF"
+            color="#E0E0E0"
           />
         </Animated.View>
       )}

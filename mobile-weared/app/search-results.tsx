@@ -1,12 +1,10 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, FlatList, Modal } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Image, Modal, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 
-const categories = ['Tous', 'Homme', 'Femme', 'Enfant', 'Accessoires', 'Chaussures'];
-
+// Même liste de produits
 const products = [
-  // Homme
   {
     id: '1',
     title: 'T-Shirt',
@@ -37,7 +35,6 @@ const products = [
     category: 'Homme',
     image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80',
   },
-  // Femme
   {
     id: '4',
     title: 'Robe',
@@ -68,7 +65,6 @@ const products = [
     category: 'Femme',
     image: 'https://images.unsplash.com/photo-1564257577-d18b7c1a4095?w=400&q=80',
   },
-  // Enfant
   {
     id: '7',
     title: 'T-Shirt Enfant',
@@ -89,7 +85,6 @@ const products = [
     category: 'Enfant',
     image: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=400&q=80',
   },
-  // Accessoires
   {
     id: '9',
     title: 'Sac à main',
@@ -110,7 +105,6 @@ const products = [
     category: 'Accessoires',
     image: 'https://images.unsplash.com/photo-1624222247344-550fb60583bb?w=400&q=80',
   },
-  // Chaussures
   {
     id: '11',
     title: 'Baskets',
@@ -133,9 +127,8 @@ const products = [
   },
 ];
 
-export default function HomeScreen() {
+export default function SearchResultsScreen() {
   const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [priceMin, setPriceMin] = useState('');
@@ -147,12 +140,7 @@ export default function HomeScreen() {
   // Filtrage des produits
   let filteredProducts = products;
 
-  // Filtre par catégorie
-  if (selectedCategory !== 'Tous') {
-    filteredProducts = filteredProducts.filter(product => product.category === selectedCategory);
-  }
-
-  // Filtre par recherche (titre, catégorie)
+  // Filtre par recherche
   if (searchQuery.trim()) {
     filteredProducts = filteredProducts.filter(product =>
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -208,7 +196,6 @@ export default function HomeScreen() {
     setShowFilterModal(false);
   };
 
-  // Compter les filtres actifs
   const activeFiltersCount = 
     (priceMin ? 1 : 0) + 
     (priceMax ? 1 : 0) + 
@@ -354,16 +341,21 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
-      
+
+      {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backIcon}>‹</Text>
+        </TouchableOpacity>
         <View style={styles.searchContainer}>
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Rechercher une robe, t-shirt..."
+            placeholder="Rechercher..."
             placeholderTextColor="#999999"
             value={searchQuery}
             onChangeText={setSearchQuery}
+            autoFocus
           />
           <TouchableOpacity 
             style={styles.filterButton}
@@ -379,51 +371,27 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View style={styles.categoriesSection}>
-        <Text style={styles.sectionTitle}>Catégories</Text>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesContainer}
-        >
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category && styles.categoryButtonActive,
-              ]}
-              onPress={() => setSelectedCategory(category)}
-            >
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.categoryTextActive,
-                ]}
-              >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
+      {/* Résultats */}
       {filteredProducts.length > 0 ? (
-        <FlatList
-          data={filteredProducts}
-          renderItem={renderProduct}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={styles.productsGrid}
-          showsVerticalScrollIndicator={false}
-          key={selectedCategory}
-        />
+        <>
+          <Text style={styles.resultsCount}>
+            {filteredProducts.length} résultat{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
+          </Text>
+          <FlatList
+            data={filteredProducts}
+            renderItem={renderProduct}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={styles.productsGrid}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>🔍</Text>
           <Text style={styles.emptyText}>Aucun résultat trouvé</Text>
           <Text style={styles.emptySubtext}>
-            Essayez de modifier vos filtres ou votre recherche
+            {searchQuery ? `Aucun produit ne correspond à "${searchQuery}"` : 'Essayez de modifier vos filtres'}
           </Text>
         </View>
       )}
@@ -437,12 +405,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 15,
-    backgroundColor: '#FFFFFF',
+    gap: 10,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#1B9876',
+    fontWeight: '300',
   },
   searchContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
@@ -483,42 +467,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
   },
-  categoriesSection: {
-    paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-    paddingHorizontal: 20,
-    marginBottom: 15,
-  },
-  categoriesContainer: {
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-  categoryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F0',
-    marginRight: 10,
-  },
-  categoryButtonActive: {
-    backgroundColor: '#1B9876',
-  },
-  categoryText: {
-    fontSize: 15,
+  resultsCount: {
+    fontSize: 14,
     color: '#666666',
-    fontWeight: '600',
-  },
-  categoryTextActive: {
-    color: '#FFFFFF',
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   productsGrid: {
     paddingHorizontal: 15,
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   productCard: {
     flex: 1,
@@ -579,7 +536,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
   },
-  // Styles pour la modale de filtres
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  emptySubtext: {
+    fontSize: 15,
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  // Styles modale (identiques à l'accueil)
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -721,29 +701,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#FFFFFF',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-    paddingTop: 60,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 20,
-  },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  emptySubtext: {
-    fontSize: 15,
-    color: '#666666',
-    textAlign: 'center',
-    lineHeight: 22,
   },
 });

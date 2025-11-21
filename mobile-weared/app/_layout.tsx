@@ -17,6 +17,17 @@ export default function RootLayout() {
         <Stack.Screen name="login" />
         <Stack.Screen name="signup" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="category/[name]" />
+        <Stack.Screen name="chat/[username]" />
+        <Stack.Screen name="product/[id]" />
+        <Stack.Screen name="checkout/[id]" />
+        <Stack.Screen name="favorites" />
+        <Stack.Screen name="search-results" />
+        <Stack.Screen name="wallet" />
+        <Stack.Screen name="my-purchases" />
+        <Stack.Screen name="my-sales" />
+        <Stack.Screen name="help" />
+        <Stack.Screen name="settings" />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal', headerShown: true }} />
       </Stack>
       <StatusBar style="auto" />

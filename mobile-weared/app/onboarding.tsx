@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingBottom: 15,
+    paddingBottom: 60,
     paddingHorizontal: 40,
     backgroundColor: '#FFFFFF',
   },
